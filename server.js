@@ -10,11 +10,12 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 5000; // El servidor correrá en el puerto 5000
+const PORT = process.env.PORT || 5000;
 
 // Middlewares necesarios para entender JSON y permitir conexión con React
 app.use(cors()); 
-app.use(express.json()); 
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
 
 const USERS_FILE = path.join(__dirname, 'users.json');
 

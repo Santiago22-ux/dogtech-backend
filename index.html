@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DogTech - Sistema de Autenticación</title>
+
+  <style>
+    :root {
+      --color-primary:     #2563eb;
+      --color-primary-dark:#1d4ed8;
+      --color-success:     #16a34a;
+      --color-success-bg:  #dcfce7;
+      --color-error:       #dc2626;
+      --color-error-bg:    #fee2e2;
+      --color-bg:          #f1f5f9;
+      --color-surface:     #ffffff;
+      --color-text:        #0f172a;
+      --color-text-muted:  #64748b;
+      --color-border:      #e2e8f0;
+      --color-border-focus:#93c5fd;
+      --radius:            10px;
+      --shadow:            0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .auth-container {
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 420px;
+      padding: 2.5rem;
+    }
+
+    .app-header { text-align: center; margin-bottom: 2rem; }
+    .app-header h1 { font-size: 1.6rem; font-weight: 700; color: #1e293b; }
+    .app-header p  { color: var(--color-text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
+
+    .tab-bar {
+      display: flex;
+      border-bottom: 2px solid var(--color-border);
+      margin-bottom: 1.75rem;
+    }
+    .tab-btn {
+      flex: 1; background: none; border: none;
+      padding: 0.75rem; cursor: pointer;
+      font-size: 0.95rem; font-weight: 600;
+      color: var(--color-text-muted);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tab-btn.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+
+    .field-group { margin-bottom: 1.1rem; }
+    .field-group label {
+      display: block; font-size: 0.85rem;
+      font-weight: 600; margin-bottom: 0.35rem;
+    }
+    
+    /* Contenedor relativo para poder posicionar el ojo encima del input */
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    
+    .field-group input {
+      width: 100%; padding: 0.65rem 2.5rem 0.65rem 0.9rem; /* Más espacio a la derecha para el ojo */
+      border: 1.5px solid var(--color-border);
+      border-radius: 7px; font-size: 0.95rem;
+      color: var(--color-text); background: #f8fafc;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .field-group input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-border-focus);
+      background: #fff;
+    }
+
+    /* Estilos del botón del ojo */
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .toggle-password:hover {
+      color: var(--color-primary);
+    }
+
+    .forgot-link {
+      display: block;
+      text-align: right;
+      font-size: 0.8rem;
+      color: var(--color-primary);
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .forgot-link:hover { text-decoration: underline; }
+
+    .btn-submit {
+      width: 100%; padding: 0.75rem;
+      background: var(--color-primary);
+      color: #fff; border: none;
+      border-radius: 7px; font-size: 1rem;
+      font-weight: 700; cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-submit:hover    { background: var(--color-primary-dark); }
+    .btn-submit:active   { transform: scale(0.98); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .alert {
+      display: none; padding: 0.75rem 1rem;
+      border-radius: 7px; font-size: 0.9rem;
+      font-weight: 600; margin-top: 1rem;
+      text-align: center;
+    }
+    .alert.success {
+      display: block;
+      background: var(--color-success-bg);
+      color: var(--color-success);
+      border: 1px solid #bbf7d0;
+    }
+    .alert.error {
+      display: block;
+      background: var(--color-error-bg);
+      color: var(--color-error);
+      border: 1px solid #fecaca;
+    }
+
+    .form-footer { text-align: center; margin-top: 1.25rem; font-size: 0.85rem; color: var(--color-text-muted); }
+    .form-footer a { color: var(--color-primary); cursor: pointer; text-decoration: underline; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div class="auth-container">
+
+    <div class="app-header">
+      <h1>🐾 DogTech</h1>
+      <p>Gestión de Acceso - Evidencia GA7</p>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-login" onclick="mostrarTab('login')">Iniciar sesión</button>
+      <button class="tab-btn" id="tab-registro" onclick="mostrarTab('registro')">Registrarse</button>
+    </div>
+
+    <div class="form-section active" id="seccion-login">
+      <div class="field-group">
+        <label for="login-email">Correo electrónico (Usuario)</label>
+        <input type="email" id="login-email" placeholder="santi@mail.com" />
+      </div>
+
+      <div class="field-group">
+        <label for="login-password">Contraseña</label>
+        <div class="password-wrapper">
+          <input type="password" id="login-password" placeholder="Tu contraseña" />
+          <button class="toggle-password" onclick="alternarVisibilidad('login-password')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <a class="forgot-link" onclick="alert('Funcionalidad de recuperación simulada para la evidencia.')">¿Olvidaste tu contraseña?</a>
+
+      <button class="btn-submit" id="btn-login" onclick="iniciarSesion()">
+        Ingresar
+      </button>
+
+      <div class="alert" id="mensaje-login"></div>
+
+      <p class="form-footer">
+        ¿No tienes cuenta? <a onclick="mostrarTab('registro')">Regístrate aquí</a>
+      </p>
+    </div>
+
+    <div class="form-section" id="seccion-registro">
+      <div class="field-group">
+        <label for="reg-nombre">Nombre completo</label>
+        <input type="text" id="reg-nombre" placeholder="Santiago Ordóñez" />
+      </div>
+
+      <div class="field-group">
+        <label for="reg-email">Correo electrónico</label>
+        <input type="email" id="reg-email" placeholder="santi@mail.com" />
+      </div>
+
+      <div class="field-group">
+        <label for="reg-password">Contraseña</label>
+        <div class="password-wrapper">
+          <input type="password" id="reg-password" placeholder="Mayúscula + Número (Mín. 6)" />
+          <button class="toggle-password" onclick="alternarVisibilidad('reg-password')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="reg-password2">Confirmar contraseña</label>
+        <div class="password-wrapper">
+          <input type="password" id="reg-password2" placeholder="Repite tu contraseña" />
+          <button class="toggle-password" onclick="alternarVisibilidad('reg-password2')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="btn-registro" onclick="registrarUsuario()">
+        Crear cuenta
+      </button>
+
+      <div class="alert" id="mensaje-registro"></div>
+
+      <p class="form-footer">
+        ¿Ya tienes cuenta? <a onclick="mostrarTab('login')">Inicia sesión aquí</a>
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    const API_URL = '/api';
+
+    // FUNCIÓN PARA MOSTRAR/OCULTAR CONTRASEÑA
+    function alternarVisibilidad(idInput) {
+      const input = document.getElementById(idInput);
+      if (input.type === "password") {
+        input.type = "text";
+      } else {
+        input.type = "password";
+      }
+    }
+
+    function mostrarTab(tab) {
+      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('seccion-' + tab).classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+      limpiarMensaje('mensaje-login');
+      limpiarMensaje('mensaje-registro');
+    }
+
+    function mostrarMensaje(id, texto, tipo) {
+      const el = document.getElementById(id);
+      el.textContent = texto;
+      el.className = 'alert ' + tipo;
+    }
+
+    function limpiarMensaje(id) {
+      const el = document.getElementById(id);
+      el.textContent = '';
+      el.className = 'alert';
+    }
+
+    async function registrarUsuario() {
+      const nombre      = document.getElementById('reg-nombre').value.trim();
+      const correo       = document.getElementById('reg-email').value.trim();
+      const contrasena   = document.getElementById('reg-password').value;
+      const contrasena2  = document.getElementById('reg-password2').value;
+      const btn         = document.getElementById('btn-registro');
+
+      if (!nombre || !correo || !contrasena || !contrasena2) {
+        return mostrarMensaje('mensaje-registro', '⚠️ Por favor completa todos los campos.', 'error');
+      }
+      if (contrasena.length < 6) {
+        return mostrarMensaje('mensaje-registro', '⚠️ La contraseña debe tener al menos 6 caracteres.', 'error');
+      }
+      
+      const tieneMayuscula = /[A-Z]/.test(contrasena);
+      const tieneNumero = /[0-9]/.test(contrasena);
+      
+      if (!tieneMayuscula || !tieneNumero) {
+        return mostrarMensaje('mensaje-registro', '⚠️ La contraseña requiere al menos una letra MAYÚSCULA y un NÚMERO.', 'error');
+      }
+
+      if (contrasena !== contrasena2) {
+        return mostrarMensaje('mensaje-registro', '⚠️ Las contraseñas no coinciden.', 'error');
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Procesando...';
+
+      try {
+        const respuesta = await fetch(`${API_URL}/registrar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, correo, contrasena })
+        });
+
+        const datos = await respuesta.json();
+
+        if (respuesta.ok) {
+          mostrarMensaje('mensaje-registro', '✅ ' + datos.mensaje, 'success');
+          document.getElementById('reg-nombre').value = '';
+          document.getElementById('reg-email').value = '';
+          document.getElementById('reg-password').value = '';
+          document.getElementById('reg-password2').value = '';
+          setTimeout(() => mostrarTab('login'), 2000);
+        } else {
+          mostrarMensaje('mensaje-registro', '⚠️ ' + datos.error, 'error');
+        }
+      } catch (error) {
+        mostrarMensaje('mensaje-registro', '❌ No se pudo conectar con el servidor backend.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Crear cuenta';
+      }
+    }
+
+    async function iniciarSesion() {
+      const usuario  = document.getElementById('login-email').value.trim();
+      const contrasena = document.getElementById('login-password').value;
+      const btn      = document.getElementById('btn-login');
+
+      if (!usuario || !contrasena) {
+        return mostrarMensaje('mensaje-login', '⚠️ Ingresa tu correo y contraseña.', 'error');
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Verificando...';
+
+      try {
+        const respuesta = await fetch(`${API_URL}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usuario, contrasena })
+        });
+
+        const datos = await respuesta.json();
+
+        if (respuesta.ok) {
+          mostrarMensaje('mensaje-login', '✅ ' + datos.mensaje, 'success'); 
+        } else {
+          mostrarMensaje('mensaje-login', '❌ ' + datos.error, 'error'); 
+        }
+      } catch (error) {
+        mostrarMensaje('mensaje-login', '❌ No se pudo conectar con el servidor backend.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Ingresar';
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key !== 'Enter') return;
+      if (document.getElementById('seccion-login').classList.contains('active'))    iniciarSesion();
+      if (document.getElementById('seccion-registro').classList.contains('active')) registrarUsuario();
+    });
+  </script>
+</body>
+</html>

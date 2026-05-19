@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": 1779217845154,
+    "nombre": "Santiago Ordonez",
+    "correo": "santi@mail.com",
+    "contrasena": "santi123"
+  },
+  {
+    "id": 1779218535998,
+    "nombre": "Santiago Ordoñez Rosero",
+    "correo": "baironelgrandioso@gmail.com",
+    "contrasena": "222222"
+  },
+  {
+    "id": 1779219246341,
+    "nombre": "Martin Comesaña",
+    "correo": "martin2@gmail.com",
+    "contrasena": "Martin2"
+  }
+]
