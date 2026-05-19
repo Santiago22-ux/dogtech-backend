@@ -8,30 +8,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Conexión a MongoDB (Asegúrate de que la variable MONGO_URI esté en Render)
+// Conexión a MongoDB usando la variable de entorno que configuraste en Render
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Conectado a MongoDB'))
   .catch(err => console.error('Error de conexión:', err));
 
+// Estas rutas son las que tu Frontend (index.html) está buscando
 app.post('/registrar', async (req, res) => {
-  try {
-    const { nombre, correo, contrasena } = req.body;
-    // Lógica para guardar en BD aquí
-    res.status(200).json({ mensaje: "Usuario registrado correctamente" });
-  } catch (err) {
-    res.status(500).json({ error: "No se pudo registrar" });
-  }
+    // Aquí irá tu lógica de base de datos
+    res.status(200).json({ mensaje: "Usuario registrado con éxito" });
 });
 
 app.post('/login', async (req, res) => {
-  try {
-    const { correo, contrasena } = req.body;
-    // Lógica para buscar en BD aquí
-    res.status(200).json({ mensaje: "Sesión iniciada correctamente" });
-  } catch (err) {
-    res.status(500).json({ error: "Credenciales inválidas" });
-  }
+    // Aquí irá tu lógica de base de datos
+    res.status(200).json({ mensaje: "Inicio de sesión exitoso" });
 });
 
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
+app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));git add .
+

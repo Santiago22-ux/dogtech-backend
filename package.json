@@ -12,8 +12,18 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongodb": "^7.2.0",
     "mongoose": "^9.6.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Santiago22-ux/dogtech-backend.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Santiago22-ux/dogtech-backend/issues"
+  },
+  "homepage": "https://github.com/Santiago22-ux/dogtech-backend#readme"
 }
