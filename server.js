@@ -15,13 +15,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 const MONGO_URI = 'mongodb://santi:dogtech2026@ac-fgm3hq1-shard-00-00.pevd03a.mongodb.net:27017,ac-fgm3hq1-shard-00-01.pevd03a.mongodb.net:27017,ac-fgm3hq1-shard-00-02.pevd03a.mongodb.net:27017/?ssl=true&replicaSet=atlas-uv9od6-shard-0&authSource=admin&appName=Cluster0';
 
 // Conexión profesional a MongoDB
+// En tu server.js, usa process.env
+const mongoose = require('mongoose');
+
+// Render leerá el valor de la variable MONGO_URI configurada en su panel
+const MONGO_URI = process.env.MONGO_URI; 
+
 mongoose.connect(MONGO_URI)
-    .then(() => console.log('🚀 ¡Conexión exitosa a MongoDB Atlas!'))
+    .then(() => console.log('🚀 ¡Conectado con éxito a MongoDB Atlas!'))
     .catch(err => console.error('❌ Error fatal de conexión:', err));
 
 // Esquema y Modelo simple
 const UserSchema = new mongoose.Schema({ nombre: String, correo: String });
-const Usuario = mongoose.model('Usuario', UserSchema);
+const Usuario = mongoose.models.Usuario || mongoose.model('Usuario', { nombre: String, email: String });
 
 // Ruta de prueba
 app.get('/', (req, res) => res.send('Backend DogTech activo y conectado a Atlas.'));
