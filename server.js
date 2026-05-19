@@ -14,9 +14,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 🚀 ENLACE DE CONEXIÓN (Copia aquí tu enlace directo con contraseña)
 const MONGO_URI = 'mongodb://santi:dogtech2026@ac-fgm3hq1-shard-00-00.pevd03a.mongodb.net:27017,ac-fgm3hq1-shard-00-01.pevd03a.mongodb.net:27017,ac-fgm3hq1-shard-00-02.pevd03a.mongodb.net:27017/?ssl=true&replicaSet=atlas-uv9od6-shard-0&authSource=admin&appName=Cluster0';
 
-// Conexión profesional a MongoDB
-// En tu server.js, usa process.env
-const mongoose = require('mongoose');
+// Conexión profesional a MongoDBgit add server.js
+
 
 // Render leerá el valor de la variable MONGO_URI configurada en su panel
 const MONGO_URI = process.env.MONGO_URI; 
