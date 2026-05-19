@@ -2,12 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-// 1. PRIMERO CREAS LA APP
-const app = express(); 
+// --- AQUÍ ESTÁ EL CAMBIO ---
+// Definimos el puerto antes de usarlo en app.listen
+const PORT = process.env.PORT || 5000; 
+const app = express();
+// ----------------------------
 
-// 2. LUEGO USAS LOS MIDDLEWARES (Aquí ya puedes usar app)
-app.use(cors()); 
+app.use(cors());
 app.use(express.json());
+
 // Tu conexión original
 const MONGO_URI = "mongodb+srv://santi:dogtech@cluster0.pevd03a.mongodb.net/?appName=Cluster0";
 
@@ -34,5 +37,5 @@ app.post('/api/registrar', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en puerto ${PORT}`);
+    console.log(`Servidor backend corriendo en puerto ${PORT}`);
 });
