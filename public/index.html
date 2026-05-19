@@ -256,7 +256,37 @@
   </div>
 
   <script>
-    const API_URL = '/api';
+ // Cambia esto:
+
+// En tu archivo index.html, busca la definición de la URL
+// Cambia lo que tengas por esta dirección:
+const API_URL = 'https://dogtech-backend.onrender.com';
+
+// Asegúrate de que tu función de registro use esta variable:
+async function registrarUsuario() {
+    const nombre = document.getElementById('reg-nombre').value;
+    const correo = document.getElementById('reg-email').value;
+    const contrasena = document.getElementById('reg-password').value;
+
+    try {
+        const respuesta = await fetch(`${API_URL}/api/registrar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, correo, contrasena })
+        });
+        
+        const data = await respuesta.json();
+        
+        if (respuesta.ok) {
+            alert('¡Registro exitoso en MongoDB Atlas!');
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error de conexión:', error);
+        alert('No se pudo conectar al servidor.');
+    }
+}
 
     // FUNCIÓN PARA MOSTRAR/OCULTAR CONTRASEÑA
     function alternarVisibilidad(idInput) {

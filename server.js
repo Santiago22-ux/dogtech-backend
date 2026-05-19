@@ -1,33 +1,43 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const express = require('express');
+const cors = require('cors'); // <--- Debes tener esta línea
+const app = express();
 
+app.use(cors()); // <--- ¡ESTA LÍNEA ES LA QUE PERMITE LA CONEXIÓN!
+app.use(express.json());
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middlewares
-app.use(cors());
+app.use(cors()); // ¡Crucial para que el navegador deje pasar la conexión!
 app.use(express.json());
 
-// Conexión a MongoDB usando variable de entorno (Configúrala en el panel de Render)
-const MONGO_URI = process.env.MONGO_URI;
+// Tu conexión original
+const MONGO_URI = "mongodb+srv://santi:dogtech@cluster0.pevd03a.mongodb.net/?appName=Cluster0";
 
 mongoose.connect(MONGO_URI)
     .then(() => console.log('🚀 ¡Conectado con éxito a MongoDB Atlas!'))
     .catch(err => console.error('❌ Error fatal de conexión:', err));
 
-// Definición de modelo "a prueba de errores"
 const Usuario = mongoose.models.Usuario || mongoose.model('Usuario', { 
     nombre: String, 
-    email: String 
+    correo: String, 
+    contrasena: String 
 });
 
-// Ruta principal
-app.get('/', (req, res) => {
-    res.send('Backend DogTech activo y conectado a Atlas.');
+// Ruta de Registro
+app.post('/api/registrar', async (req, res) => {
+    try {
+        const { nombre, correo, contrasena } = req.body;
+        const nuevoUsuario = new Usuario({ nombre, correo, contrasena });
+        await nuevoUsuario.save();
+        res.status(201).json({ mensaje: "Usuario registrado con éxito" });
+    } catch (error) {
+        res.status(500).json({ error: "Error en el servidor al registrar" });
+    }
 });
 
-// Inicio del servidor
 app.listen(PORT, () => {
-    console.log(`Servidor backend corriendo en puerto ${PORT}`);
+    console.log(`Servidor corriendo en puerto ${PORT}`);
 });
