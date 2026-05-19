@@ -5,20 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DogTech - Sistema de Autenticación</title>
   <style>
-    :root {
-      --color-primary: #2563eb;
-      --color-primary-dark: #1d4ed8;
-      --color-success: #16a34a;
-      --color-success-bg: #dcfce7;
-      --color-error: #dc2626;
-      --color-error-bg: #fee2e2;
-      --color-bg: #f1f5f9;
-      --color-surface: #ffffff;
-      --color-text: #0f172a;
-      --color-text-muted: #64748b;
-      --color-border: #e2e8f0;
-      --radius: 10px;
-    }
+    :root { --color-primary: #2563eb; --color-primary-dark: #1d4ed8; --color-success: #16a34a; --color-success-bg: #dcfce7; --color-error: #dc2626; --color-error-bg: #fee2e2; --color-bg: #f1f5f9; --color-surface: #ffffff; --color-text: #0f172a; --color-text-muted: #64748b; --color-border: #e2e8f0; --radius: 10px; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: var(--color-bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; }
     .auth-container { background: var(--color-surface); border-radius: var(--radius); box-shadow: 0 4px 24px rgba(0,0,0,0.08); width: 100%; max-width: 420px; padding: 2.5rem; }
@@ -40,74 +27,56 @@
 </head>
 <body>
   <div class="auth-container">
-    <div class="app-header"><h1>🐾 DogTech</h1></div>
+    <div class="app-header"><h1>🐾 DogTech</h1><p>Gestión de Acceso</p></div>
     <div class="tab-bar">
       <button class="tab-btn active" id="tab-login" onclick="mostrarTab('login')">Iniciar sesión</button>
       <button class="tab-btn" id="tab-registro" onclick="mostrarTab('registro')">Registrarse</button>
     </div>
-
     <div class="form-section active" id="seccion-login">
       <div class="field-group"><label>Correo</label><input type="email" id="login-email" /></div>
       <div class="field-group"><label>Contraseña</label>
-        <div class="password-wrapper">
-          <input type="password" id="login-password" />
-          <button class="toggle-password" onclick="alternarVisibilidad('login-password')">👁️</button>
-        </div>
+        <div class="password-wrapper"><input type="password" id="login-password" /><button class="toggle-password" onclick="alternarVisibilidad('login-password')">👁️</button></div>
       </div>
       <button class="btn-submit" id="btn-login" onclick="iniciarSesion()">Ingresar</button>
       <div class="alert" id="mensaje-login"></div>
     </div>
-
     <div class="form-section" id="seccion-registro">
       <div class="field-group"><label>Nombre completo</label><input type="text" id="reg-nombre" /></div>
       <div class="field-group"><label>Correo</label><input type="email" id="reg-email" /></div>
       <div class="field-group"><label>Contraseña (Mayúscula + Número)</label>
-        <div class="password-wrapper">
-          <input type="password" id="reg-password" />
-          <button class="toggle-password" onclick="alternarVisibilidad('reg-password')">👁️</button>
-        </div>
+        <div class="password-wrapper"><input type="password" id="reg-password" /><button class="toggle-password" onclick="alternarVisibilidad('reg-password')">👁️</button></div>
       </div>
       <div class="field-group"><label>Confirmar contraseña</label>
-        <div class="password-wrapper">
-          <input type="password" id="reg-password2" />
-          <button class="toggle-password" onclick="alternarVisibilidad('reg-password2')">👁️</button>
-        </div>
+        <div class="password-wrapper"><input type="password" id="reg-password2" /><button class="toggle-password" onclick="alternarVisibilidad('reg-password2')">👁️</button></div>
       </div>
       <button class="btn-submit" id="btn-registro" onclick="registrarUsuario()">Crear cuenta</button>
       <div class="alert" id="mensaje-registro"></div>
     </div>
   </div>
-
   <script>
     const API_URL = 'https://dogtech-backend.onrender.com';
-
     function mostrarTab(tab) {
       document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('seccion-' + tab).classList.add('active');
       document.getElementById('tab-' + tab).classList.add('active');
     }
-
     function alternarVisibilidad(id) {
       const i = document.getElementById(id);
       i.type = i.type === "password" ? "text" : "password";
     }
-
     function mostrarMensaje(id, txt, tipo) {
       const el = document.getElementById(id);
       el.textContent = txt;
       el.className = 'alert ' + tipo;
     }
-
     async function registrarUsuario() {
       const nombre = document.getElementById('reg-nombre').value.trim();
       const correo = document.getElementById('reg-email').value.trim();
       const pass = document.getElementById('reg-password').value;
       const pass2 = document.getElementById('reg-password2').value;
-
       if (!/[A-Z]/.test(pass) || !/[0-9]/.test(pass)) return mostrarMensaje('mensaje-registro', '⚠️ La contraseña requiere 1 mayúscula y 1 número.', 'error');
       if (pass !== pass2) return mostrarMensaje('mensaje-registro', '⚠️ Las contraseñas no coinciden.', 'error');
-
       try {
         const res = await fetch(`${API_URL}/registrar`, {
           method: 'POST',
@@ -119,7 +88,6 @@
         else mostrarMensaje('mensaje-registro', '⚠️ ' + d.error, 'error');
       } catch (e) { mostrarMensaje('mensaje-registro', '❌ Error de conexión.', 'error'); }
     }
-
     async function iniciarSesion() {
       const correo = document.getElementById('login-email').value.trim();
       const pass = document.getElementById('login-password').value;

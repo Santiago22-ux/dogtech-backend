@@ -1,34 +1,37 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-app.use(cors()); 
+app.use(cors());
 app.use(express.json());
 
-// Sustituye <tu_contraseña> por tu clave real, sin los signos <>
-const MONGO_URI = "mongodb+srv://santi:tu_contraseña_real@cluster0.pevd03a.mongodb.net/?appName=Cluster0";
+// Conexión a MongoDB (Asegúrate de que la variable MONGO_URI esté en Render)
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('Conectado a MongoDB'))
+  .catch(err => console.error('Error de conexión:', err));
 
-mongoose.connect(MONGO_URI)
-    .then(() => console.log('✅ Conectado a Atlas'))
-    .catch(err => console.error('❌ Error:', err));
-
-// RUTA RAIZ
-app.get('/', (req, res) => {
-    res.send('Backend DogTech activo y conectado a Atlas.');
-});
-
-// RUTA DE REGISTRO - Coincide con el fetch del index
 app.post('/registrar', async (req, res) => {
-    try {
-        const { nombre, correo, contrasena } = req.body;
-        // Aquí iría tu lógica de Mongoose para guardar
-        res.status(201).json({ mensaje: "Usuario registrado con éxito" });
-    } catch (error) {
-        res.status(500).json({ error: "Error en el servidor" });
-    }
+  try {
+    const { nombre, correo, contrasena } = req.body;
+    // Lógica para guardar en BD aquí
+    res.status(200).json({ mensaje: "Usuario registrado correctamente" });
+  } catch (err) {
+    res.status(500).json({ error: "No se pudo registrar" });
+  }
 });
 
+app.post('/login', async (req, res) => {
+  try {
+    const { correo, contrasena } = req.body;
+    // Lógica para buscar en BD aquí
+    res.status(200).json({ mensaje: "Sesión iniciada correctamente" });
+  } catch (err) {
+    res.status(500).json({ error: "Credenciales inválidas" });
+  }
+});
+
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
