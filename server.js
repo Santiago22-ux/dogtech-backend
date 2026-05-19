@@ -1,104 +1,40 @@
-/**
- * SERVIDOR API - DOGTECH (Evidencia GA7-220501096-AA5-EV01)
- * Desarrollador: Santiago Ordóñez
- * Tecnologías: Node.js + Express
- */
-
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
+const mongoose = require('mongoose');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middlewares necesarios para entender JSON y permitir conexión con React
-app.use(cors()); 
+// Middlewares
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const USERS_FILE = path.join(__dirname, 'users.json');
+// 🚀 ENLACE DE CONEXIÓN (Copia aquí tu enlace directo con contraseña)
+const MONGO_URI = 'mongodb://santi:dogtech2026@ac-fgm3hq1-shard-00-00.pevd03a.mongodb.net:27017,ac-fgm3hq1-shard-00-01.pevd03a.mongodb.net:27017,ac-fgm3hq1-shard-00-02.pevd03a.mongodb.net:27017/?ssl=true&replicaSet=atlas-uv9od6-shard-0&authSource=admin&appName=Cluster0';
 
-/**
- * Función para leer los usuarios del archivo JSON
- */
-const obtenerUsuarios = () => {
-    try {
-        const datos = fs.readFileSync(USERS_FILE, 'utf8');
-        return JSON.parse(datos);
-    } catch (error) {
-        return [];
-    }
-};
+// Conexión profesional a MongoDB
+mongoose.connect(MONGO_URI)
+    .then(() => console.log('🚀 ¡Conexión exitosa a MongoDB Atlas!'))
+    .catch(err => console.error('❌ Error fatal de conexión:', err));
 
-/**
- * Función para guardar los usuarios en el archivo JSON
- */
-const guardarUsuarios = (usuarios) => {
-    fs.writeFileSync(USERS_FILE, JSON.stringify(usuarios, null, 2));
-};
+// Esquema y Modelo simple
+const UserSchema = new mongoose.Schema({ nombre: String, correo: String });
+const Usuario = mongoose.model('Usuario', UserSchema);
 
-// ==========================================
-// RUTA 1: REGISTRO DE USUARIOS
-// Requisitos: correo, nombre y contraseña
-// ==========================================
-app.post('/api/registrar', (req, res) => {
-    const { nombre, correo, contrasena } = req.body;
+// Ruta de prueba
+app.get('/', (req, res) => res.send('Backend DogTech activo y conectado a Atlas.'));
 
-    // Validación de campos obligatorios
-    if (!nombre || !correo || !contrasena) {
-        return res.status(400).json({ error: 'Todos los campos son obligatorios.' });
-    }
-
-    const usuarios = obtenerUsuarios();
-
-    // Validar si el correo ya existe
-    const usuarioExistente = usuarios.find(u => u.correo === correo);
-    if (usuarioExistente) {
-        return res.status(400).json({ error: 'El correo electrónico ya está registrado.' });
-    }
-
-    // Crear el nuevo objeto de usuario
-    const nuevoUsuario = {
-        id: Date.now(),
-        nombre,
-        correo,
-        contrasena
-    };
-
-    // Guardar en el archivo JSON
-    usuarios.push(nuevoUsuario);
-    guardarUsuarios(usuarios);
-
-    return res.status(201).json({ mensaje: 'Usuario registrado con éxito.' });
-});
-
-// ==========================================
-// RUTA 2: INICIO DE SESIÓN (LOGIN)
-// Requisitos: usuario y contraseña
-// ==========================================
-app.post('/api/login', (req, res) => {
-    const { usuario, contrasena } = req.body; // 'usuario' recibe el correo
-
-    if (!usuario || !contrasena) {
-        return res.status(400).json({ error: 'Se requiere usuario y contraseña.' });
-    }
-
-    const usuarios = obtenerUsuarios();
-
-    // Buscar coincidencia exacta
-    const usuarioEncontrado = usuarios.find(u => u.correo === usuario && u.contrasena === contrasena);
-
-    if (usuarioEncontrado) {
-        // REQUISITO: Mensaje exacto si es correcto
-        return res.status(200).json({ mensaje: 'autenticación satisfactoria' });
-    } else {
-        // REQUISITO: Mensaje exacto si falla
-        return res.status(401).json({ error: 'error de autenticación' });
-    }
-});
-
-// Inicialización del servidor
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor backend corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor corriendo en puerto ${PORT}`);
+});
+// Define un modelo sencillo
+const Usuario = mongoose.model('Usuario', { nombre: String, email: String });
+
+// Crea una ruta para registrar usuarios
+app.post('/api/usuarios', async (req, res) => {
+    const nuevoUsuario = new Usuario(req.body);
+    await nuevoUsuario.save();
+    res.status(201).send('Usuario guardado en MongoDB Atlas');
 });
