@@ -1,9 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const express = require('express');
-const cors = require('cors'); // <--- Debes tener esta línea
-const app = express();
+// ... el resto de tu código
+
 
 app.use(cors()); // <--- ¡ESTA LÍNEA ES LA QUE PERMITE LA CONEXIÓN!
 app.use(express.json());
