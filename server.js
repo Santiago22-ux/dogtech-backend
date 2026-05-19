@@ -1,17 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-// ... el resto de tu código
 
+// 1. PRIMERO CREAS LA APP
+const app = express(); 
 
-app.use(cors()); // <--- ¡ESTA LÍNEA ES LA QUE PERMITE LA CONEXIÓN!
+// 2. LUEGO USAS LOS MIDDLEWARES (Aquí ya puedes usar app)
+app.use(cors()); 
 app.use(express.json());
-const app = express();
-const PORT = process.env.PORT || 5000;
-
-app.use(cors()); // ¡Crucial para que el navegador deje pasar la conexión!
-app.use(express.json());
-
 // Tu conexión original
 const MONGO_URI = "mongodb+srv://santi:dogtech@cluster0.pevd03a.mongodb.net/?appName=Cluster0";
 
