@@ -25,5 +25,5 @@ app.post('/login', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));git add .
+app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
 

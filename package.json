@@ -1,29 +1,14 @@
 {
   "name": "dogtech-backend",
   "version": "1.0.0",
-  "description": "API de autenticación para DogTech - Evidencia GA7-220501096-AA5-EV01",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "Santiago Ordonez",
-  "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "mongodb": "^7.2.0",
-    "mongoose": "^9.6.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Santiago22-ux/dogtech-backend.git"
-  },
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Santiago22-ux/dogtech-backend/issues"
-  },
-  "homepage": "https://github.com/Santiago22-ux/dogtech-backend#readme"
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "mongoose": "^7.0.0",
+    "dotenv": "^16.0.0"
+  }
 }
